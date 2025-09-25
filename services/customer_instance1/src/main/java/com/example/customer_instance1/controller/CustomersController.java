@@ -19,7 +19,7 @@ class CustomersController {
     }
 
     @GetMapping(value = "/{id}/order", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> getCustomerOrder(@PathVariable long id) {
+    public Map<String, Object> getCustomerOrder(@PathVariable("id") long id) {
         // Call the orders service via Eureka service name
         Map<?,?> order = rest.get()
                 .uri("/api/orders/{id}", id)
