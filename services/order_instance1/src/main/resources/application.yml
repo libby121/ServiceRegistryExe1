@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: orders
+server:
+  port: 9001   # override to start more instances
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Make each instance unique & reachable
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
+    prefer-ip-address: true
+
+management:
+  endpoints.web.exposure.include: health,info
+  endpoint.health.probes.enabled: true
