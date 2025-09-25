@@ -9,17 +9,18 @@ import org.springframework.web.client.RestClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
 
 @Configuration
 class HttpConfig {
-  private static final Logger log = LoggerFactory.getLogger(HttpConfig.class);
 
+  /**
+   * @LoadBalanced enables service name resolution (e.g., http://orders)
+   * through Spring Cloud LoadBalancer + Eureka.
+   * Spring Boot/Cloud will auto-apply any RestClientCustomizer beans.
+   */
   @Bean
   @LoadBalanced
-  WebClient.Builder lbWebClientBuilder() {
-    HttpClient httpClient = HttpClient.create().wiretap(true); // reactor-netty logs
-    return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
+  RestClient.Builder restClientBuilder() {
+    return RestClient.builder();
   }
 }
