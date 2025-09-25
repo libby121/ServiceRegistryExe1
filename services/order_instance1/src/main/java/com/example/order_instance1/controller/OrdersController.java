@@ -17,7 +17,7 @@ class OrdersController {
   private String instanceId;
 
   @GetMapping("/{id}")
-  public Map<String,Object> getOrder(@PathVariable long id) {
+  public Map<String,Object> getOrder(@PathVariable("id") long id) {
     return Map.of(
       "orderId", id,
       "servedBy", instanceId,

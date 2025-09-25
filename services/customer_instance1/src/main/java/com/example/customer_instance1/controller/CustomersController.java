@@ -23,7 +23,7 @@ import java.util.Map;
         }
 
         @GetMapping(value = "/{id}/order", produces = MediaType.APPLICATION_JSON_VALUE)
-        public Mono<Map<String, Object>> getCustomerOrder(@PathVariable long id) {
+        public Mono<Map<String, Object>> getCustomerOrder(@PathVariable("id") long id) {
             Mono<Map> orderMono = webClient.get()
                     .uri("http://orders/api/orders/{id}", id) // service NAME, not host
                     .retrieve()
