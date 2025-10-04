@@ -1,37 +1,37 @@
 package com.example.customer_instance1.controller;
 
-import org.springframework.http.MediaType;
+import org.example.dto.OrderDto;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
+ @RestController
+ @RequestMapping("/customers")
+public class CustomersController {
 
-    @RestController
-    @RequestMapping("/api/customers")
-    class CustomersController {
+     private static final Logger log = LoggerFactory.getLogger(CustomersController.class);
 
-        private final WebClient webClient;
+     private final WebClient.Builder webClientBuilder;
 
-        CustomersController(WebClient.Builder builder) {
-            // @LoadBalanced builder → service-name URLs are resolved via Eureka
-            this.webClient = builder.build();
-        }
+     public CustomersController(WebClient.Builder webClientBuilder) {
 
-        @GetMapping(value = "/{id}/order", produces = MediaType.APPLICATION_JSON_VALUE)
-        public Mono<Map<String, Object>> getCustomerOrder(@PathVariable("id") long id) {
-            Mono<Map> orderMono = webClient.get()
-                    .uri("http://orders/api/orders/{id}", id) // service NAME, not host
-                    .retrieve()
-                    .bodyToMono(Map.class);
-
-            return orderMono.map(order -> Map.of(
-                    "customerId", id,
-                    "order", order
-            ));
-        }
-    }
+         this.webClientBuilder = webClientBuilder;
+     }
+     @GetMapping("/orders/{id}")
+     public Mono<OrderDto> getOrder(@PathVariable("id") long id) {
+         return webClientBuilder
+                 .build()
+                 // IMPORTANT: use the SERVICE ID from Eureka, not host:port
+                 .get().uri("http://orders/orders/{id}", id)
+                 .retrieve()
+                 .bodyToMono(OrderDto.class)
+                         .doOnSuccess(o -> log.info("✅ Order {} reçu depuis orders", id))
+                 .doOnError(e -> log.error("❌ Échec appel orders pour id={}", id, e));
+     }
+}

@@ -2,11 +2,22 @@ spring:
   application:
     name: customers
 server:
-  port: 9000
+  port: 9002  # override to start more instances
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true      # customers appears in registry
+    fetch-registry: true            # customers fetches the registry to call others
+  instance:
+    # Make each instance unique & reachable
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
+    #    prefer-ip-address: true
+    ip-address: 127.0.0.1
+
+    #    hostname: localhost
+    prefer-ip-address: true
+
 
 management:
   endpoints.web.exposure.include: health,info,loggers   # so you can tweak at runtime
